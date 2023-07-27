@@ -8,20 +8,20 @@ import (
 )
 
 type Constraint struct {
-	Tag   string
-	Kind  string
-	Param any
+	Tag   string `json:"tag,omitempty"`
+	Kind  string `json:"kind,omitempty"`
+	Param any    `json:"param,omitempty"`
 }
 
 type FieldError struct {
-	Field       string
-	Value       any
-	StructField string
-	Violations  []Constraint
+	Field       string       `json:"field,omitempty"`
+	Value       any          `json:"value,omitempty"`
+	StructField string       `json:"structField,omitempty"`
+	Violations  []Constraint `json:"violations,omitempty"`
 }
 
 type Error struct {
-	FieldsErrors []FieldError
+	FieldsErrors []FieldError `json:"fieldsErrors,omitempty"`
 }
 
 func (e *Error) Error() string {
@@ -36,12 +36,13 @@ func (e *Error) Error() string {
 	return strings.Join(errs, "")
 }
 
-func Struct(i any) *Error {
-	t := reflect.TypeOf(i)
+func Struct(s any) *Error {
+	t := reflect.TypeOf(s)
+	v := reflect.ValueOf(s)
 	if t.Kind() == reflect.Pointer {
 		t = t.Elem()
+		v = v.Elem()
 	}
-	v := reflect.ValueOf(i)
 	fieldsErrors := []FieldError{}
 	for i := 0; i < t.NumField(); i++ {
 		f := t.Field(i)

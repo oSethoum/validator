@@ -2,19 +2,41 @@ package validator_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/oSethoum/validator"
 )
 
+type BaseModel struct {
+	ID        string     `json:"id,omitempty" gorm:"primaryKey"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+}
+
 type User struct {
-	Name   string `validate:"minLen=3;maxLen=10"`
-	Email  string `validate:"minLen=5;email"`
-	Age    int    `validate:"min=17;max=35"`
-	Status string `validate:"oneOf=active,away"`
+	BaseModel
+	Name   string `json:"name,omitempty" gorm:"unique;not null" validate:"minLen=5;alpha"`
+	Role   *Role  `json:"role,omitempty" gormy:"edge=one"`
+	RoleID string `json:"roleId,omitempty"`
+}
+
+type Role struct {
+	BaseModel
+	Name          string            `json:"name,omitempty" gorm:"unique;not null" validate:"minLen=5;alpha"`
+	DeniedActions string            `json:"deniedActions,omitempty" gorm:"unique"`
+	DeniedFields  map[string]string `json:"deniedFields,omitempty" gorm:"serializer:json"`
+	Users         []User            `json:"users,omitempty" gormy:"edge=many"`
 }
 
 func TestStruct(T *testing.T) {
-	err := validator.Struct(User{Name: "cccc", Status: "away", Email: "kkk@gmail.com", Age: 18})
+	err := validator.Struct(
+		&User{
+			Name: "jue4",
+			Role: &Role{
+				Name: "admin",
+			},
+		},
+	)
 	if err != nil {
 		T.Error(err)
 	}
