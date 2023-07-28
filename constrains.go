@@ -21,6 +21,11 @@ const (
 	maxLen       = "maxLen"
 	match        = "match"
 	oneOf        = "oneOf"
+	// TODO implement the rest
+	in      = "in"
+	out     = "out"
+	include = "include"
+	exclude = "exclude"
 )
 
 const (

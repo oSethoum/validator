@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 func parseConstraints(tag string) []Constraint {
@@ -154,11 +155,22 @@ func getFloatParam(param any) (float64, bool) {
 	return 0, false
 }
 
-func in[T int64 | uint64 | float64 | string](array []T, value T) bool {
+func inArray[T int64 | uint64 | float64 | string](array []T, value T) bool {
 	for i := 0; i < len(array); i++ {
 		if array[i] == value {
 			return true
 		}
 	}
 	return false
+}
+
+func camel(s string) string {
+	switch s {
+	case "":
+		return s
+	case "ID":
+		return "id"
+	default:
+		return string(unicode.ToLower(rune(s[0]))) + s[1:]
+	}
 }
