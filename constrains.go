@@ -3,6 +3,7 @@ package validator
 const (
 	required     = "required"
 	alpha        = "alpha"
+	url          = "url"
 	alphaSpace   = "alphaSpace"
 	alphaNumeric = "alphaNumeric"
 	numeric      = "numeric"
