@@ -4,6 +4,8 @@ import "regexp"
 
 const (
 	alphaRegexString        = "^[a-zA-Z]+$"
+	urlRegexString          = "^(https?|ftp)://[^\\s/$.?#].[^\\s]*$"
+	alphaSpaceRegexString   = "^[a-zA-Z]+(?: [a-zA-Z]+)*$"
 	alphaNumericRegexString = "^[a-zA-Z0-9]+$"
 	numericRegexString      = "^[-+]?[0-9]+(?:\\.[0-9]+)?$"
 	numberRegexString       = "^[0-9]+$"
@@ -19,6 +21,8 @@ const (
 
 var regexMap = map[string]*regexp.Regexp{
 	alpha:        regexp.MustCompile(alphaRegexString),
+	url:          regexp.MustCompile(urlRegexString),
+	alphaSpace:   regexp.MustCompile(alphaSpaceRegexString),
 	alphaNumeric: regexp.MustCompile(alphaNumericRegexString),
 	numeric:      regexp.MustCompile(numericRegexString),
 	number:       regexp.MustCompile(numberRegexString),

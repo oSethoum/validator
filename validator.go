@@ -119,13 +119,22 @@ func Struct(s any) error {
 								violations = append(violations, constraint)
 							}
 
-						case oneOf:
+						case in:
 							param := getOneOfString(constraint.Param)
 							if param == nil {
 								panic(fmt.Sprintf("validate: struct %s field %s tag %s invalid param %v", t.Name(), ft.Name, constraint.Tag, constraint.Param))
 							}
 							constraint.Param = param
 							if !inArray(param, value) {
+								violations = append(violations, constraint)
+							}
+						case out:
+							param := getOneOfString(constraint.Param)
+							if param == nil {
+								panic(fmt.Sprintf("validate: struct %s field %s tag %s invalid param %v", t.Name(), ft.Name, constraint.Tag, constraint.Param))
+							}
+							constraint.Param = param
+							if inArray(param, value) {
 								violations = append(violations, constraint)
 							}
 						}
@@ -260,6 +269,219 @@ func Struct(s any) error {
 			}
 			fieldError.Value = value
 		}
+
+		if isStringArray(ft.Type) {
+			value, ok := getStringArrayValue(v.Field(i))
+			if !ok {
+				if strings.Contains(tag, required) {
+					violations = append(violations, Constraint{
+						Tag:  required,
+						Kind: required,
+					})
+				}
+			} else {
+				for _, constraint := range constraints {
+					switch constraint.Kind {
+					case in:
+						param, ok := getStringListParam(constraint.Param)
+						if !ok {
+							panic(fmt.Sprintf("validate: struct %s field %s tag %s invalid param %v", t.Name(), ft.Name, constraint.Tag, constraint.Param))
+						}
+						constraint.Param = param
+						if !insArray(param, value) {
+							constraints = append(constraints, constraint)
+						}
+					case out:
+						param, ok := getStringListParam(constraint.Param)
+						if !ok {
+							panic(fmt.Sprintf("validate: struct %s field %s tag %s invalid param %v", t.Name(), ft.Name, constraint.Tag, constraint.Param))
+						}
+						constraint.Param = param
+						if !outsArray(param, value) {
+							constraints = append(constraints, constraint)
+						}
+					case include:
+						param, ok := getStringListParam(constraint.Param)
+						if !ok {
+							panic(fmt.Sprintf("validate: struct %s field %s tag %s invalid param %v", t.Name(), ft.Name, constraint.Tag, constraint.Param))
+						}
+						constraint.Param = param
+						if !insArray(value, param) {
+							constraints = append(constraints, constraint)
+						}
+					case exclude:
+						param, ok := getStringListParam(constraint.Param)
+						if !ok {
+							panic(fmt.Sprintf("validate: struct %s field %s tag %s invalid param %v", t.Name(), ft.Name, constraint.Tag, constraint.Param))
+						}
+						constraint.Param = param
+						if !outsArray(value, param) {
+							constraints = append(constraints, constraint)
+						}
+					}
+				}
+			}
+		}
+
+		if isIntArray(ft.Type) {
+			value, ok := getIntArrayValue(v.Field(i))
+			if !ok {
+				if strings.Contains(tag, required) {
+					violations = append(violations, Constraint{
+						Tag:  required,
+						Kind: required,
+					})
+				}
+			} else {
+				for _, constraint := range constraints {
+					switch constraint.Kind {
+					case in:
+						param, ok := getIntListParam(constraint.Param)
+						if !ok {
+							panic(fmt.Sprintf("validate: struct %s field %s tag %s invalid param %v", t.Name(), ft.Name, constraint.Tag, constraint.Param))
+						}
+						constraint.Param = param
+						if !insArray(param, value) {
+							constraints = append(constraints, constraint)
+						}
+					case out:
+						param, ok := getIntListParam(constraint.Param)
+						if !ok {
+							panic(fmt.Sprintf("validate: struct %s field %s tag %s invalid param %v", t.Name(), ft.Name, constraint.Tag, constraint.Param))
+						}
+						constraint.Param = param
+						if !outsArray(param, value) {
+							constraints = append(constraints, constraint)
+						}
+					case include:
+						param, ok := getIntListParam(constraint.Param)
+						if !ok {
+							panic(fmt.Sprintf("validate: struct %s field %s tag %s invalid param %v", t.Name(), ft.Name, constraint.Tag, constraint.Param))
+						}
+						constraint.Param = param
+						if !insArray(value, param) {
+							constraints = append(constraints, constraint)
+						}
+					case exclude:
+						param, ok := getIntListParam(constraint.Param)
+						if !ok {
+							panic(fmt.Sprintf("validate: struct %s field %s tag %s invalid param %v", t.Name(), ft.Name, constraint.Tag, constraint.Param))
+						}
+						constraint.Param = param
+						if !outsArray(value, param) {
+							constraints = append(constraints, constraint)
+						}
+					}
+				}
+			}
+		}
+
+		if isUintArray(ft.Type) {
+			value, ok := getUintArrayValue(v.Field(i))
+			if !ok {
+				if strings.Contains(tag, required) {
+					violations = append(violations, Constraint{
+						Tag:  required,
+						Kind: required,
+					})
+				}
+			} else {
+				for _, constraint := range constraints {
+					switch constraint.Kind {
+					case in:
+						param, ok := getUintListParam(constraint.Param)
+						if !ok {
+							panic(fmt.Sprintf("validate: struct %s field %s tag %s invalid param %v", t.Name(), ft.Name, constraint.Tag, constraint.Param))
+						}
+						constraint.Param = param
+						if !insArray(param, value) {
+							constraints = append(constraints, constraint)
+						}
+					case out:
+						param, ok := getUintListParam(constraint.Param)
+						if !ok {
+							panic(fmt.Sprintf("validate: struct %s field %s tag %s invalid param %v", t.Name(), ft.Name, constraint.Tag, constraint.Param))
+						}
+						constraint.Param = param
+						if !outsArray(param, value) {
+							constraints = append(constraints, constraint)
+						}
+					case include:
+						param, ok := getUintListParam(constraint.Param)
+						if !ok {
+							panic(fmt.Sprintf("validate: struct %s field %s tag %s invalid param %v", t.Name(), ft.Name, constraint.Tag, constraint.Param))
+						}
+						constraint.Param = param
+						if !insArray(value, param) {
+							constraints = append(constraints, constraint)
+						}
+					case exclude:
+						param, ok := getUintListParam(constraint.Param)
+						if !ok {
+							panic(fmt.Sprintf("validate: struct %s field %s tag %s invalid param %v", t.Name(), ft.Name, constraint.Tag, constraint.Param))
+						}
+						constraint.Param = param
+						if !outsArray(value, param) {
+							constraints = append(constraints, constraint)
+						}
+					}
+				}
+			}
+		}
+
+		if isFloatArray(ft.Type) {
+			value, ok := getFloatArrayValue(v.Field(i))
+			if !ok {
+				if strings.Contains(tag, required) {
+					violations = append(violations, Constraint{
+						Tag:  required,
+						Kind: required,
+					})
+				}
+			} else {
+				for _, constraint := range constraints {
+					switch constraint.Kind {
+					case in:
+						param, ok := getFloatListParam(constraint.Param)
+						if !ok {
+							panic(fmt.Sprintf("validate: struct %s field %s tag %s invalid param %v", t.Name(), ft.Name, constraint.Tag, constraint.Param))
+						}
+						constraint.Param = param
+						if !insArray(param, value) {
+							constraints = append(constraints, constraint)
+						}
+					case out:
+						param, ok := getFloatListParam(constraint.Param)
+						if !ok {
+							panic(fmt.Sprintf("validate: struct %s field %s tag %s invalid param %v", t.Name(), ft.Name, constraint.Tag, constraint.Param))
+						}
+						constraint.Param = param
+						if !outsArray(param, value) {
+							constraints = append(constraints, constraint)
+						}
+					case include:
+						param, ok := getFloatListParam(constraint.Param)
+						if !ok {
+							panic(fmt.Sprintf("validate: struct %s field %s tag %s invalid param %v", t.Name(), ft.Name, constraint.Tag, constraint.Param))
+						}
+						constraint.Param = param
+						if !insArray(value, param) {
+							constraints = append(constraints, constraint)
+						}
+					case exclude:
+						param, ok := getFloatListParam(constraint.Param)
+						if !ok {
+							panic(fmt.Sprintf("validate: struct %s field %s tag %s invalid param %v", t.Name(), ft.Name, constraint.Tag, constraint.Param))
+						}
+						constraint.Param = param
+						if !outsArray(value, param) {
+							constraints = append(constraints, constraint)
+						}
+					}
+				}
+			}
+		}
+
 		if len(violations) > 0 {
 			fieldError.Violations = violations
 			fieldsErrors = append(fieldsErrors, fieldError)
