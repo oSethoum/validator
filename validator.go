@@ -7,13 +7,6 @@ import (
 	"strings"
 )
 
-type NameCase = string
-
-const (
-	Camel  NameCase = "camel"
-	Pascal NameCase = "pascal"
-)
-
 type Constraint struct {
 	Tag   string `json:"-"`
 	Kind  string `json:"kind,omitempty"`
@@ -43,12 +36,7 @@ func (e *Error) Error() string {
 	return strings.Join(errs, "")
 }
 
-func Struct(s any, nameCase ...string) error {
-	nc := Camel
-	if len(nameCase) > 0 {
-		nc = nameCase[0]
-	}
-
+func Struct(s any) error {
 	t := reflect.TypeOf(s)
 	v := reflect.ValueOf(s)
 	if t.Kind() == reflect.Pointer {
@@ -78,8 +66,10 @@ func Struct(s any, nameCase ...string) error {
 			Field:  ft.Name,
 			Struct: t.Name(),
 		}
-		if nc == Camel {
-			fieldError.Field = camel(ft.Name)
+		if tag, ok := ft.Tag.Lookup("json"); ok {
+			fieldError.Field = strings.Split(tag, ",")[0]
+		} else {
+			fieldError.Field = ft.Name
 		}
 		violations := []Constraint{}
 
