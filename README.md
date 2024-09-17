@@ -39,9 +39,9 @@ Here's an example of a struct definition with validation rules:
 ```go
 type User struct {
     ID       int    `validate:"max=25"`
-    Name     string `validate:"required,min=2,max=50"`
-    Email    string `validate:"required,email"`
-    Age      int    `validate:"required,min=18"`
+    Name     string `validate:"required;min=2,max=50"`
+    Email    string `validate:"required;email"`
+    Age      int    `validate:"required;min=18"`
 }
 ```
 
@@ -109,9 +109,9 @@ Each validation rule can be combined with other rules and options using commas. 
 
 ```go
 type User struct {
-    Name  string `validate:"required,alpha,minLen=3,maxLen=50"`
-    Email string `validate:"required,email"`
-    Age   int    `validate:"required,numeric,min=18"`
+    Name  string `validate:"required;alpha;minLen=3,maxLen=50"`
+    Email string `validate:"required;email"`
+    Age   int    `validate:"required;numeric;min=18"`
 }
 ```
 
